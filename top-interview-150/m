@@ -1,0 +1,80 @@
+class MyIterator {
+    private data: number[];
+    private index: number;
+
+    constructor(data: number[]) {
+        this.data = data;
+        this.index = 0;
+    }
+
+    hasNext(): boolean {
+        return this.index < this.data.length;
+    }
+
+    next(): number {
+        if (this.hasNext()) {
+            const value = this.data[this.index];
+            this.index++;
+            return value;
+        } else {
+            throw new Error("No more elements in the iterator.");
+        }
+    }
+}
+
+/**
+ * // This is the Iterator's API interface.
+ * // You should not implement it, or speculate about its implementation
+ * class Iterator {
+ *      hasNext(): boolean {}
+ *
+ *      next(): number {}
+ * }
+ */
+
+class PeekingIterator {
+
+    pointer: number;
+    memoizedData: Record<number, number>;
+    iterator: MyIterator;
+
+    constructor(iterator: MyIterator) {
+        this.pointer = -1; // [*1, 2, 3]
+        this.memoizedData = {};
+        this.iterator = iterator;
+    }
+
+    peek(): number {
+        return 0;
+    }
+
+    next(): number {
+        this.pointer++;
+        if (this.pointer in this.memoizedData) {
+            return this.memoizedData[this.pointer];
+        }
+        if (!this.iterator.hasNext()) {
+            throw new Error('Peek called on consumed iterator!');
+        }
+        const value = this.iterator.next();
+        this.memoizedData[this.pointer] = value;
+        return value;
+    }
+
+    hasNext(): boolean { // consumed 1 item -> peek -> internal pointer is advanced and ours is not updated
+        return true;
+    }
+}
+
+var obj = new PeekingIterator(new MyIterator([1, 2, 3, 4]));
+console.log(obj.next());
+console.log(obj.next());
+console.log(obj.next());
+console.log(obj.next());
+/**
+ * Your PeekingIterator object will be instantiated and called as such:
+ * var obj = new PeekingIterator(iterator)
+ * var param_1 = obj.peek()
+ * var param_2 = obj.next()
+ * var param_3 = obj.hasNext()
+ */

@@ -1,0 +1,64 @@
+"use strict";
+
+// 1 0 1 0 1 0 1, k = 3 -> 1111111
+
+// 1111100010101 -> 
+
+// 1110111000111
+
+function calculateHypotheticalReward(nums: number[], index: number, k: number) {
+    // Flip incoming item, only called for item == 0
+    let hypotheticalReward = 1;
+    k--;
+    // Left side
+    var hasHypotheticalRewardUpdated = false;
+    for (var i = index - 1; i >= 0; i--) {
+        if (nums[i] == 0 && k > 0) {
+            k--;
+            continue;
+        }
+        if (nums[i] == 1) {
+            continue;
+        }
+        hypotheticalReward += (index - 1 - i);
+        hasHypotheticalRewardUpdated = true;
+        break;
+    }
+    if (!hasHypotheticalRewardUpdated) {
+        hypotheticalReward += (index - 1);
+    }
+    console.log('After processing left', hypotheticalReward);
+    // Right
+    hasHypotheticalRewardUpdated = false;
+    for (var i = index + 1; i < nums.length; i++) {
+        if (nums[i] == 0 && k > 0) {
+            k--;
+            continue;
+        }
+        if (nums[i] == 1) {
+            continue;
+        }
+        hypotheticalReward += (i - (index + 1));
+        hasHypotheticalRewardUpdated = true;
+    }
+    if (!hasHypotheticalRewardUpdated) {
+        hypotheticalReward += (nums.length - 1 - (index + 1));
+    }
+    return hypotheticalReward;
+}
+
+function temp(nums: number[]) {
+    var maxReward = Number.MIN_VALUE;
+    for (var i = 0; i < nums.length; i++) {
+        const num = nums[i];
+        if (num == 0) {
+            var hypotheticalReward = calculateHypotheticalReward(nums, i, 1);
+            if (hypotheticalReward > maxReward) {
+                maxReward = hypotheticalReward;
+            }
+        }
+    }
+    console.log(maxReward);
+}
+
+temp([1,1,1,0,1,1,1,0,0,0,1,1,1])
